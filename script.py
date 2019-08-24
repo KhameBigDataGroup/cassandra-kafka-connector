@@ -17,7 +17,7 @@ session.execute(
 session.execute("USE bitcoin;")
 
 session.execute(
-    "CREATE TABLE IF NOT EXISTS bitcoin.blocks (hash text, confirmations text, strippedsize text, size text, weight text, height text, version text, version_hex text, merkleroot text, time text, mediantime text, nonce text, bits text, difficulty text, chainwork text, n_tx text, previousblockhash text, nextblockhash text, PRIMARY KEY (hash, height)) WITH CLUSTERING ORDER BY (height DESC);")
+    "CREATE TABLE IF NOT EXISTS bitcoin.blocks (hash text, confirmations text, strippedsize text, size text, weight text, height text, version text, version_hex text, merkleroot text, time text, mediantime text, nonce text, bits text, difficulty text, chainwork text, n_tx text, previousblockhash text, nextblockhash text, data text, PRIMARY KEY (hash, height)) WITH CLUSTERING ORDER BY (height DESC);")
 session.execute(
     "CREATE TABLE IF NOT EXISTS bitcoin.transactions (hash text, version text, size text, vsize text, weight text, locktime text, vin text, vout text, block_height text, PRIMARY KEY (hash, block_height)) WITH CLUSTERING ORDER BY (block_height DESC);")
 
@@ -33,14 +33,15 @@ for message in consumer:
         try:
             session.execute(
                 """
-        INSERT INTO bitcoin.blocks (hash, confirmations, strippedsize, size, weight, height, version, version_hex, merkleroot, time, mediantime, nonce, bits, difficulty, chainwork, n_tx, previousblockhash, nextblockhash)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        INSERT INTO bitcoin.blocks (hash, confirmations, strippedsize, size, weight, height, version, version_hex, merkleroot, time, mediantime, nonce, bits, difficulty, chainwork, n_tx, previousblockhash, nextblockhash, data)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)
         """,
                 (str(entry['hash']), str(entry['confirmations']), str(entry['strippedsize']), str(entry['size']),
                  str(entry['weight']), str(entry['height']), str(entry['version']), str(entry['versionHex']),
                  str(entry['merkleroot']), str(entry['time']), str(entry['mediantime']), str(entry['nonce']),
                  str(entry['bits']), str(entry['difficulty']), str(entry['chainwork']), str(entry['nTx']),
-                 str(entry['previousblockhash']), str(entry['nextblockhash'])))
+                 str(entry['previousblockhash']), str(entry['nextblockhash']),
+                 str(message.value)))
 
             for tx in entry['tx']:
                 session.execute(
