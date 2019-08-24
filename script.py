@@ -6,7 +6,7 @@ from cassandra.cluster import Cluster
 from settings import BTC_BLOCK_TOPIC, BOOSTRAP_SERVER, CASSANDRA_HOST, CASSANDRA_KEYSPACE
 
 consumer = KafkaConsumer(
-    BTC_BLOCK_TOPIC, bootstrap_servers="%s" % (BOOSTRAP_SERVER))
+    BTC_BLOCK_TOPIC, bootstrap_servers="%s" % (BOOSTRAP_SERVER), group_id='bitcoin_consumer1')
 
 cluster = Cluster([CASSANDRA_HOST])
 session = cluster.connect()
