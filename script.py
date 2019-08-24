@@ -11,12 +11,11 @@ consumer = KafkaConsumer(
 cluster = Cluster([CASSANDRA_HOST])
 session = cluster.connect(CASSANDRA_KEYSPACE)
 
-try:
-    for message in consumer:
-        entry = json.loads(message.value)
-#         session.execute(
-#             """
-# INSERT INTO bitcoin.blocks (height)
-# VALUES (%s)
-# """,
-#             (entry['source'],)
+for message in consumer:
+    entry = json.loads(message.value)
+    session.execute(
+        """
+INSERT INTO bitcoin.blocks (hash, confirmations, strippedsize, size, weight, height, version, version_hex, merkleroot, time, mediantime, nonce, bits, difficulty, chainwork, n_tx, previousblockhash, nextblockhash)
+VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+""",
+        (entry['hash'], entry['confirmations'], entry['strippedsize'], entry['size'], entry['weight'], entry['height'], entry['version'], entry['versionHex'], entry['merkleroot'], entry['time'], entry['mediantime'], entry['nonce'], entry['bits'], entry['difficulty'], entry['chainwork'], entry['nTx'], entry['previousblockhash'], entry['nextblockhash']))

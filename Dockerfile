@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN CASS_DRIVER_BUILD_CONCURRENCY=8 pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 
