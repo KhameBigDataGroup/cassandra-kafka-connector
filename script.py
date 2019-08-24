@@ -6,7 +6,8 @@ from cassandra.cluster import Cluster
 from settings import BTC_BLOCK_TOPIC, BOOSTRAP_SERVER, CASSANDRA_HOST, CASSANDRA_KEYSPACE
 
 consumer = KafkaConsumer(
-    BTC_BLOCK_TOPIC, bootstrap_servers="%s" % (BOOSTRAP_SERVER), group_id='bitcoin_consumer')
+    BTC_BLOCK_TOPIC, bootstrap_servers="%s" % (BOOSTRAP_SERVER), group_id='bitcoin_consumer_2',
+    auto_offset_reset='earliest')
 
 cluster = Cluster([CASSANDRA_HOST])
 session = cluster.connect()
@@ -44,7 +45,6 @@ for message in consumer:
                  str(entry['bits']), str(entry['difficulty']), str(entry['chainwork']), str(entry['nTx']),
                  str(entry['previousblockhash']), str(entry['nextblockhash']),
                  str(message.value)))
-
             block_hash = entry['hash']
             transaction_hashes = []
 
